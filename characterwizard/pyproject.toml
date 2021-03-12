@@ -1,0 +1,49 @@
+[tool.briefcase]
+project_name = "Character Wizard"
+bundle = "com.thomaslillo"
+version = "0.0.1"
+url = "https://thomaslillo.com/characterwizard"
+license = "MIT license"
+author = 'Thomas Lillo'
+author_email = "thomas.j.lillo@gmail.com"
+
+[tool.briefcase.app.characterwizard]
+formal_name = "Character Wizard"
+description = "A simple character generator for new players to D and D 5e, using questions about themselves or their ideal in game personality to create a character."
+icon = "src/characterwizard/resources/characterwizard"
+sources = ['src/characterwizard']
+requires = []
+
+
+[tool.briefcase.app.characterwizard.macOS]
+requires = [
+    'toga-cocoa>=0.3.0.dev20',
+]
+
+[tool.briefcase.app.characterwizard.linux]
+requires = [
+    'toga-gtk>=0.3.0.dev20',
+]
+system_requires = [
+    'libgirepository1.0-dev',
+    'libcairo2-dev',
+    'libpango1.0-dev',
+    'libwebkitgtk-3.0-0',
+    'gir1.2-webkit-3.0',
+]
+
+[tool.briefcase.app.characterwizard.windows]
+requires = [
+    'toga-winforms>=0.3.0.dev20',
+]
+
+# Mobile deployments
+[tool.briefcase.app.characterwizard.iOS]
+requires = [
+    'toga-iOS>=0.3.0.dev20',
+]
+
+[tool.briefcase.app.characterwizard.android]
+requires = [
+    'toga-android>=0.3.0.dev20',
+]
