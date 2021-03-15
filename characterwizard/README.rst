@@ -5,7 +5,7 @@ Character Wizard
 `The BeeWare Project`_. **If you want to see more tools like Briefcase, please
 consider** `becoming a financial member of BeeWare`_.
 
-A simple character generator for new players to D and D 5e, using questions about themselves or their ideal in game personality to create a character.
+A simple character creation assistant for new players new to D&D 5e, using questions about themselves or their ideal in game personality to help them select a race and a class and generate basic stats for their character sheet.
 
 .. _`Briefcase`: https://github.com/beeware/briefcase
 .. _`The BeeWare Project`: https://beeware.org/
