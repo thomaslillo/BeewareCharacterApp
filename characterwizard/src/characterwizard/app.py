@@ -26,121 +26,58 @@ class CharacterWizard(toga.App):
         main_box = toga.Box(style=Pack(direction=COLUMN)) # creating the main box with a style
         # COLUMN box - that is, it is a box that will consume all the available width, and will expand its height as content is added, but it will try to be as short as possible.
         
-        
-        """ creating things to go into the main box
-        """
-        self.name_input = toga.TextInput(style=Pack(flex=1))
-        name_box = toga.Box(style=Pack(direction=ROW, padding=5))
-        name_box.add(self.name_input)
-        
-        # button that calls a function when pressed
-        button = toga.Button(
-            'Start Character Quiz',
-            on_press=self.say_hello,
-            style=Pack(padding=5)
-        )
-        
         """ the logic and creation of the questions box
         """
         # the question box that will hold all the rows of questions
         questions_box = toga.Box(style=Pack(direction=COLUMN, padding=5))
-        
-        # dict to tally points into each run of the app
-        # give humans a starting advantage to make more of them per party - in line with lore
-        races_points = {"Dragonborn":0, "Dwarf":0, "Elf":0, "Gnome":0, "Half-Elf":0, "Hafling":0, "Half-Orc":0, "Human":3, "Tiefling":0}
-        
-        # import the questions and traits to display - stored externally for easy modifications
-        race_traits = {} # lookup for traits
-        questions = []
-        
-        # make this reading files into a function 
-        #questions = read_csv('..\\data\\RaceQs.csv')
-        
-        # utf-8 with a byte order mark
-        with open('..\\data\\RaceTs.csv', mode='r', encoding='utf-8-sig') as traits_file:
-            for line in csv.reader(traits_file):
-                race = {line[0]: line[1:]}
-                race_traits.update(race)
-        
-        with open('..\\data\\RaceQs.csv', mode='r', encoding='utf-8-sig') as raw_file:
-            for line in csv.reader(raw_file):
-                questions.append(line)
-        
-        # print to dev console to view the files - REMOVE IN PROD
-        #print(race_traits)
-        #print(race_list)
-        #print(race_traits['Elf'][:-1])
-        print(race_traits)
-        print("\n")
-        print(questions)
         
         # label at the top with instructions
         instructions_label = toga.Label(
             """
             Welcome to the D&D 5e character wizard! This is like a little personality text that will match you to a race and class that you can 
             enter into your D&D character sheet. In each section pick the trait that is most like you (or who you think you'd like to be in game).
+            Unless otherwise chosen, names are randomly generated from the elven category!
             """,
             style=Pack(padding=(2))
         )
         
+        # select a gender
+        
         # create a box for the race questions
-        race_box = toga.Box(style=Pack(direction=COLUMN, padding=5))
+        name_box = toga.Box(style=Pack(direction=COLUMN, padding=5))
         
-        # THE QUESTION ROW CREATION LOOP
+        # store the list of names in a list
+        names = []
         
-        # loop through each of the 36 pre determined race comparison questions
-        for i in questions:
-            # selecting random traits for each combination of races
-            trait_1 = race_traits[i[1]][randint(0,3)]
-            trait_2 = race_traits[i[2]][randint(0,3)]
-
-            # initial selected display value - updated by buttons
-            init_val = "results"
+        # make this reading files into a function 
+        #questions = read_csv('..\\data\\RaceQs.csv')
+        with open('..\\data\\namelist.csv', mode='r', encoding='utf-8-sig') as raw_file:
+            for line in csv.reader(raw_file):
+                names.append(line)
+        print(names)
         
-            # labels of traits and question number
-            RQnum = toga.Label(i[0]+". ", style=Pack(padding=(2)))
-            Trait1 = toga.Label(trait_1, style=Pack(padding=(2)))
-            Trait2 = toga.Label(trait_2, style=Pack(padding=(2)))
-            # the buttons
-            t1_very = toga.Button('Very',
-                style=Pack(padding=5))
-            t2_very = toga.Button('Very',
-                style=Pack(padding=5))
-            t1_kinda = toga.Button('Kinda',
-                style=Pack(padding=5))
-            t2_kinda = toga.Button('Kinda',
-                style=Pack(padding=5))
-            # updated label at end to display values from buttons
-            chosen = toga.Label(" | Selected: "+init_val, style=Pack(padding=(2)))
         
-            one_row = []
+        greek = toga.Button(
+        "Greek Myth Names",
+        on_press=self.GreekNames,
+        style=Pack(padding=5)
+        )
         
-            one_row.append(RQnum)
-            one_row.append(Trait1)
-            one_row.append(t1_very)
-            one_row.append(t1_kinda)
-            one_row.append(t2_kinda)
-            one_row.append(t2_very)
-            one_row.append(Trait2)
-            one_row.append(chosen)
-
-            question_box = toga.Box(style=Pack(direction=ROW, padding=5))
-            
-            # add the row
-            for i in one_row:
-                question_box.add(i)
-            
-            race_box.add(question_box)
+        elven = toga.Button(
+        "Elven Myth Names",
+        on_press=self.ElvenNames,
+        style=Pack(padding=5)
+        )
+        
+        name_box.add(greek)
+        name_box.add(elven)
         
         """ write to the questons box - instructions first then questions then results boxes
         """
         questions_box.add(instructions_label)
-        questions_box.add(race_box)
-
+        questions_box.add(name_box)
         """ adding things to the main box and adding the main box to the window
         """
-        main_box.add(name_box)
-        main_box.add(button)
         main_box.add(questions_box)
         
         # this is where we define a window to put the main box into
@@ -148,11 +85,27 @@ class CharacterWizard(toga.App):
         self.main_window.content = main_box # we add the main box to the window
         self.main_window.show() # show the main window    
     
-    def say_hello(self, widget):
-        self.main_window.info_dialog(
-            'Hello',
-            'Welcome {}'.format(self.name_input.value)   
-        )
+    def GreekNames(self, widget):
+        print('greek names!')
+        # call the generate_names function with the greek subset of self.names
+    
+    def ElvenNames(self, widget):
+        print('Elven names!')
+        # call the generate_names function with the elven subset of self.names
+        
+    def generate_names(self, widget, names):
+        # placeholder code
+        print('predict!')
+        
+        # create a list of all the first letters of names from names list
+        
+        # create a probability table from the list of two letter pairings
+        
+        # randomly select 6 letters from the first letter list
+        
+        # randomly generate a expected length for all 6 names
+        
+        # return a list of 6 names between 5 and 12 characters long
 
 
 # this main method creates the instance of our application - imported and invoked by __main__.py

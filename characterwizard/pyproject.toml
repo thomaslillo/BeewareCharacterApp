@@ -2,7 +2,7 @@
 project_name = "Character Wizard"
 bundle = "com.thomaslillo"
 version = "0.0.1"
-url = "https://thomaslillo.com/characterwizard"
+url = "https://tomstavern.com/characterwizard"
 license = "MIT license"
 author = 'Thomas Lillo'
 author_email = "thomas.j.lillo@gmail.com"
