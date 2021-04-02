@@ -8,6 +8,7 @@ from toga.style.pack import ALIGNMENT_CHOICES, COLUMN, ROW, RIGHT, CENTER, Pack
 import csv
 import random
 import sys
+from functools import partial
 
 from travertino.constants import CENTER
 
@@ -78,21 +79,12 @@ class CharacterWizard(toga.App):
         
         button_box = toga.Box(style=Pack(direction=COLUMN, padding=5))
         
-        greek = toga.Button(
-        "Greek Myth Names",
-        on_press=self.GreekNames,
-        style=Pack(padding=5)
-        )
-        
-        elven = toga.Button(
-        "Elven Myth Names",
-        on_press=self.ElvenNames,
-        style=Pack(padding=5)
-        )
-        
-        # add the buttons to the box here
-        button_box.add(greek)
-        button_box.add(elven)
+        # loop through all the lists and create a button for each
+        for category in self.names:
+            # create the button names
+            button = toga.Button(category[1],on_press= partial(self.CreateNames,index=int(category[0])), style=Pack(padding=5))
+            # add the button tot he box
+            button_box.add(button)
         
         # display the name to the screen (this will be updated with the new names)
         output = toga.Box(style=Pack(direction=ROW,  padding=5))
@@ -115,20 +107,13 @@ class CharacterWizard(toga.App):
         self.main_window.show() # show the main window    
         
     # the display name button widgets
-    def GreekNames(self, widget):
-        print('Greek Names:')
+    def CreateNames(self, widget, index):
         # call the generate_names function with the elven subset of self.names
-        self.selected_list = self.names[0]
+        self.clean_names = self.names[index]
+        # set the list to be everything except first two columns
+        self.selected_list = self.clean_names[2:]
         name = self.build_dict()
-        print(name)
-        self.display_name.value = name
-    
-    def ElvenNames(self, widget):
-        print('Elf Name:')
-        # call the generate_names function with the elven subset of self.names
-        self.selected_list = self.names[1]
-        name = self.build_dict()
-        print(name)
+        #print(name)
         self.display_name.value = name
         
     def build_dict(self, chainlen = 2):
