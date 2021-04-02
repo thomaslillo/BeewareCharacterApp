@@ -1,10 +1,10 @@
 Metadata-Version: 2.1
 Briefcase-Version: 0.3.5
-Name: characterwizard
-Formal-Name: Character Wizard
-App-ID: com.thomaslillo.characterwizard
+Name: characternamewizard
+Formal-Name: Character Name Wizard
+App-ID: com.thomaslillo.characternamewizard
 Version: 0.0.1
-Home-page: https://thomaslillo.com/characterwizard
+Home-page: https://thomaslillo.com/characternamewizard
 Author: Thomas Lillo
 Author-email: thomas.j.lillo@gmail.com
-Summary: A simple character generator for new players to D and D 5e, using questions about themselves or their ideal in game personality to create a character.
+Summary: A simple character name generator for players to table top RPGs, select a them for either a random name or location name.

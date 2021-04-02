@@ -1,0 +1,4 @@
+When you want to add a new category you need to do 3 things:
+    1. Add a new clean list of exmaple names to the excel row below the last list.
+    2. Add a function to the function section that refences the index of the new list of names in the imported list.
+    3. Add a button to the button section that calls the function you made which passes the chosen index to the markov chain functions.

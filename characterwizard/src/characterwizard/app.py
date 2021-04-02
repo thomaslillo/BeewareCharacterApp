@@ -4,11 +4,29 @@ A simple character generator for new players to D and D 5e, using questions abou
 # widget toolkit
 import toga
 from toga.style import Pack
-from toga.style.pack import COLUMN, ROW, LEFT, RIGHT, Pack
+from toga.style.pack import ALIGNMENT_CHOICES, COLUMN, ROW, RIGHT, CENTER, Pack
 import csv
-from random import randint
+import random
+import sys
 
 from travertino.constants import CENTER
+
+class Mdict:
+    def __init__(self):
+        self.d = {}
+    def __getitem__(self, key):
+        if key in self.d:
+            return self.d[key]
+        else:
+            raise KeyError(key)
+    def add_key(self, prefix, suffix):
+        if prefix in self.d:
+            self.d[prefix].append(suffix)
+        else:
+            self.d[prefix] = [suffix]
+    def get_suffix(self,prefix):
+        l = self[prefix]
+        return random.choice(l)
 
 # each toga app has a single toga.app instance, representing the entity that is the application
 class CharacterWizard(toga.App):
@@ -34,28 +52,31 @@ class CharacterWizard(toga.App):
         # label at the top with instructions
         instructions_label = toga.Label(
             """
-            Welcome to the D&D 5e character wizard! This is like a little personality text that will match you to a race and class that you can 
-            enter into your D&D character sheet. In each section pick the trait that is most like you (or who you think you'd like to be in game).
-            Unless otherwise chosen, names are randomly generated from the elven category!
+            Welcome to the D&D 5e character name wizard! This is like a little tool that will help you select a brand new name for any character, 
+            whether it be an NPC or player, by the theme of the game. These names are created using a Markov Chain from lists of existing names 
+            from that theme! This ensures that they are new to you and your fellow players! Press a button below to generate a name.
             """,
             style=Pack(padding=(2))
         )
-        
-        # select a gender
-        
-        # create a box for the race questions
-        name_box = toga.Box(style=Pack(direction=COLUMN, padding=5))
-        
+
         # store the list of names in a list
-        names = []
+        self.names = []
         
         # make this reading files into a function 
         #questions = read_csv('..\\data\\RaceQs.csv')
         with open('..\\data\\namelist.csv', mode='r', encoding='utf-8-sig') as raw_file:
             for line in csv.reader(raw_file):
-                names.append(line)
-        print(names)
+                self.names.append(line)
         
+        # clean up the blanks in the lists of names
+        for category in self.names:
+            while '' in category:
+                category.remove('')
+    
+        # the buttons that display a name based on its category
+        # ADD BUTTONS HERE WHEN YOU ADD A LIST
+        
+        button_box = toga.Box(style=Pack(direction=COLUMN, padding=5))
         
         greek = toga.Button(
         "Greek Myth Names",
@@ -69,13 +90,21 @@ class CharacterWizard(toga.App):
         style=Pack(padding=5)
         )
         
-        name_box.add(greek)
-        name_box.add(elven)
+        # add the buttons to the box here
+        button_box.add(greek)
+        button_box.add(elven)
+        
+        # display the name to the screen (this will be updated with the new names)
+        output = toga.Box(style=Pack(direction=ROW,  padding=5))
+        output.add(toga.Label('Randomly Generated Name', style=Pack(text_align=RIGHT)))
+        self.display_name = toga.TextInput(readonly=True)
+        output.add(self.display_name)
         
         """ write to the questons box - instructions first then questions then results boxes
         """
         questions_box.add(instructions_label)
-        questions_box.add(name_box)
+        questions_box.add(button_box)
+        questions_box.add(output)
         """ adding things to the main box and adding the main box to the window
         """
         main_box.add(questions_box)
@@ -84,28 +113,64 @@ class CharacterWizard(toga.App):
         self.main_window = toga.MainWindow(title=self.formal_name) 
         self.main_window.content = main_box # we add the main box to the window
         self.main_window.show() # show the main window    
-    
+        
+    # the display name button widgets
     def GreekNames(self, widget):
-        print('greek names!')
-        # call the generate_names function with the greek subset of self.names
+        print('Greek Names:')
+        # call the generate_names function with the elven subset of self.names
+        self.selected_list = self.names[0]
+        name = self.build_dict()
+        print(name)
+        self.display_name.value = name
     
     def ElvenNames(self, widget):
-        print('Elven names!')
+        print('Elf Name:')
         # call the generate_names function with the elven subset of self.names
+        self.selected_list = self.names[1]
+        name = self.build_dict()
+        print(name)
+        self.display_name.value = name
         
-    def generate_names(self, widget, names):
-        # placeholder code
-        print('predict!')
+    def build_dict(self, chainlen = 2):
+        """
+        Building the dictionary
+        https://towardsdatascience.com/generating-startup-names-with-markov-chains-2a33030a4ac0 <- how I learned to do this
+        """
         
-        # create a list of all the first letters of names from names list
+        if chainlen > 10 or chainlen < 1:
+            print("Chain length must be between 1 and 10, inclusive")
+            sys.exit(0)
+
+        self.mcd = Mdict()
+        oldnames = []
+        self.chainlen = chainlen
+
+        # use the selected list of names
+        for l in self.selected_list:
+            l = l.strip()
+            oldnames.append(l)
+            s = " " * chainlen + l
+            for n in range(0,len(l)):
+                self.mcd.add_key(s[n:n+chainlen], s[n+chainlen])
+            self.mcd.add_key(s[len(l):len(l)+chainlen], "\n")
         
-        # create a probability table from the list of two letter pairings
+        return self.New()
         
-        # randomly select 6 letters from the first letter list
-        
-        # randomly generate a expected length for all 6 names
-        
-        # return a list of 6 names between 5 and 12 characters long
+    def New(self):
+        """
+        New name from the Markov chain
+        """
+        prefix = " " * self.chainlen
+        name = ""
+        suffix = ""
+        while True:
+            suffix = self.mcd.get_suffix(prefix)
+            if suffix == "\n" or len(name) > 9:
+                break
+            else:
+                name = name + suffix
+                prefix = prefix[1:] + suffix
+        return name.capitalize()
 
 
 # this main method creates the instance of our application - imported and invoked by __main__.py
