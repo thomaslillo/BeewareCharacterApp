@@ -12,8 +12,8 @@ To learn more about this process visit: https://setosa.io/ev/markov-chains/
 #### The App UI, Will Change Based On OS - Windows Version
 ![ConnectingFiles](docs/UI.png)
 
-#### Generating Elven Names Based On Existing Elven Names From D&D
-![ConnectingFiles](docs/elvenname.png)
+#### Generating Names Demo
+![ConnectingFiles](docs/makenames.gif)
 
 ## Built With Briefcase in Python
 
