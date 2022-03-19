@@ -1,0 +1,3 @@
+within folder run briefcase update
+this gets the latest version
+then run briefcase dev to run the test

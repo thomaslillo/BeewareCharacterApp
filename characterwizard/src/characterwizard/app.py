@@ -4,13 +4,11 @@ A simple character generator for new players to D and D 5e, using questions abou
 # widget toolkit
 import toga
 from toga.style import Pack
-from toga.style.pack import ALIGNMENT_CHOICES, COLUMN, ROW, RIGHT, CENTER, Pack
+from toga.style.pack import COLUMN, ROW, RIGHT, CENTER
 import csv
 import random
 import sys
 from functools import partial
-
-from travertino.constants import CENTER
 
 class Mdict:
     def __init__(self):
